@@ -1,4 +1,3 @@
-// src/api/config.js
 import axios from 'axios'
 
 // Environment variables should be used for different environments
