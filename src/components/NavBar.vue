@@ -30,10 +30,10 @@
           <!-- Navigation Links -->
           <div class="flex items-center space-x-1">
             <RouterLink
-              to="/"
+              to="/tasks"
               class="px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
               :class="[
-                $route.path === '/'
+                $route.path === '/tasks'
                   ? 'bg-blue-50 text-blue-600'
                   : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700',
               ]"
@@ -50,6 +50,25 @@
                 <span>Home</span>
               </div>
             </RouterLink>
+
+            <!-- Add Logout Button -->
+            <button
+              v-if="auth.isAuthenticated"
+              @click="handleLogout"
+              class="px-4 py-2 rounded-md text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200"
+            >
+              <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+                <span>Logout</span>
+              </div>
+            </button>
           </div>
         </div>
       </div>
@@ -59,6 +78,16 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+
+const auth = useAuthStore()
+const router = useRouter()
+
+const handleLogout = () => {
+  auth.logout()
+  router.push('/login')
+}
 </script>
 
 <style scoped>

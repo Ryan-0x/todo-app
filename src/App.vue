@@ -1,11 +1,24 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import NavBar from '@/components/NavBar.vue'
+import { useAuthStore } from '@/stores/auth'
+import { onMounted } from 'vue'
+
+const auth = useAuthStore()
+
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    auth.token = token
+  }
+})
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50 p-4">
-    <NavBar />
+    <div v-if="auth.isAuthenticated">
+      <NavBar />
+    </div>
 
     <RouterView />
   </div>

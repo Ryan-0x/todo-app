@@ -16,5 +16,9 @@ export const useToastMessages = () => {
     taskDeleted: () => toast.success('Task deleted successfully'),
     taskLoadError: () => toast.error('Failed to load task'),
     taskSaveError: () => toast.error('Failed to save task'),
+    loginSuccess: () => toast.success('Login successful'),
+    loginError: () => toast.error('Login failed'),
+    registerSuccess: () => toast.success('Register successful'),
+    registerError: () => toast.error('Register failed'),
   }
 }
