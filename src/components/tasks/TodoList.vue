@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto p-6">
+  <div class="w-full mx-auto p-6">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold">Task List</h2>
       <router-link
@@ -8,6 +8,16 @@
       >
         Create New Task
       </router-link>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-4">
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search tasks..."
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
     </div>
 
     <!-- Loading State -->
@@ -20,76 +30,129 @@
       {{ error }}
     </div>
 
-    <!-- Task List -->
-    <div v-else class="space-y-4">
-      <div v-for="task in tasks" :key="task.id" class="bg-white shadow-md rounded-lg p-4">
-        <div class="flex items-start justify-between">
-          <div class="flex items-start space-x-3 flex-1">
-            <input
-              type="checkbox"
-              :checked="task.completed"
-              @change="toggleComplete(task)"
-              class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <div class="w-full">
-              <h3
-                :class="[
-                  'text-lg font-medium',
-                  task.completed ? 'text-gray-400 line-through' : 'text-gray-900',
-                ]"
-              >
+    <!-- Task Table -->
+    <div v-else class="overflow-x-auto bg-white rounded-lg shadow">
+      <table class="min-w-full table-auto">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Status
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Title
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Description
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Created
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Updated
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr v-for="task in filteredTasks" :key="task.id" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <input
+                type="checkbox"
+                :checked="task.completed"
+                @change="toggleComplete(task)"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+            </td>
+            <td class="px-6 py-4">
+              <span :class="[task.completed ? 'text-gray-400 line-through' : 'text-gray-900']">
                 {{ task.title }}
-              </h3>
-              <p :class="['text-sm mt-1', task.completed ? 'text-gray-400' : 'text-gray-600']">
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <span :class="[task.completed ? 'text-gray-400' : 'text-gray-600']">
                 {{ task.description }}
-              </p>
-              <div class="mt-2 text-xs text-gray-500 space-y-1">
-                <p>Created: {{ formatDate(task.created_at) }}</p>
-                <p>Last Updated: {{ formatDate(task.updated_at) }}</p>
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ formatDate(task.created_at) }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ formatDate(task.updated_at) }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <div class="flex space-x-2">
+                <router-link
+                  :to="`/tasks/${task.id}`"
+                  class="text-blue-500 hover:text-blue-600 font-medium"
+                >
+                  Edit
+                </router-link>
+                <button
+                  @click="deleteTask(task.id)"
+                  class="text-red-500 hover:text-red-600 font-medium"
+                >
+                  Delete
+                </button>
               </div>
-            </div>
-          </div>
-
-          <div class="flex space-x-2 ml-4">
-            <router-link
-              :to="`/tasks/${task.id}`"
-              class="text-blue-500 hover:text-blue-600 font-medium"
-            >
-              Edit
-            </router-link>
-            <button
-              @click="deleteTask(task.id)"
-              class="text-red-500 hover:text-red-600 font-medium"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       <!-- Empty State -->
-      <div v-if="tasks.length === 0" class="text-center py-12 bg-gray-50 rounded-lg">
-        <p class="text-gray-500 text-lg">No tasks found. Create one to get started!</p>
+      <div v-if="filteredTasks.length === 0" class="text-center py-12">
+        <p class="text-gray-500 text-lg">
+          {{
+            tasks.length === 0
+              ? 'No tasks found. Create one to get started!'
+              : 'No matching tasks found.'
+          }}
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useToastMessages } from '@/utils/toast'
 const { taskCreated, taskUpdated, taskLoadError, taskSaveError, taskDeleted } = useToastMessages()
 import { taskService } from '@/api/services/task'
 import { formatDate } from '@/utils/dateFormatter'
+
 const tasks = ref([])
 const loading = ref(true)
 const error = ref(null)
+const searchQuery = ref('')
+
+// Computed property for filtered tasks
+const filteredTasks = computed(() => {
+  const query = searchQuery.value.toLowerCase()
+  return tasks.value.filter(
+    (task) =>
+      task.title.toLowerCase().includes(query) || task.description.toLowerCase().includes(query),
+  )
+})
 
 const fetchTasks = async () => {
   loading.value = true
   try {
     const response = await taskService.getAllTasks()
-
+    console.log(response)
     tasks.value = response
   } catch (err) {
     taskLoadError()

@@ -1,48 +1,38 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
+import NavBar from '@/components/NavBar.vue'
 </script>
 
 <template>
-  <header class="leading-normal max-h-screen">
-    <div class="wrapper">
-      <nav class="w-full text-center text-xs mt-8">
-        <RouterLink
-          to="/"
-          class="inline-block px-4 [&.router-link-exact-active]:text-[var(--color-text)] [&.router-link-exact-active:hover]:bg-transparent first:border-0 border-l border-[var(--color-border)]"
-        >
-          Home
-        </RouterLink>
+  <div class="min-h-screen bg-gray-50 p-4">
+    <NavBar />
 
-        <!-- <RouterLink
-          to="/tasks"
-          class="inline-block px-4 [&.router-link-exact-active]:text-[var(--color-text)] [&.router-link-exact-active:hover]:bg-transparent first:border-0 border-l border-[var(--color-border)]"
-        >
-          Tasks
-        </RouterLink> -->
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+    <RouterView />
+  </div>
 </template>
 
-<!-- For larger screens (1024px and up) -->
-<style scoped>
-@media (min-width: 1024px) {
-  header {
-    @apply flex items-center pr-[calc(var(--section-gap)/2)];
-  }
+<style>
+body {
+  @apply antialiased;
+}
 
-  .logo {
-    @apply m-0 mr-8;
-  }
+html {
+  scroll-behavior: smooth;
+}
 
-  header .wrapper {
-    @apply flex items-start flex-wrap;
-  }
+::-webkit-scrollbar {
+  width: 8px;
+}
 
-  nav {
-    @apply text-left -ml-4 text-base p-4 mt-4;
-  }
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
 }
 </style>

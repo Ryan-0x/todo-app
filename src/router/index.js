@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import TodoList from '../components/tasks/TodoList.vue'
-import TodoForm from '../components/tasks/TodoForm.vue'
+import TodoList from '@/components/tasks/TodoList.vue'
+import TodoForm from '@/components/tasks/TodoForm.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
