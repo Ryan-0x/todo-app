@@ -8,7 +8,7 @@ RUN npm ci
 
 # Copy source code and necessary directories
 COPY . .
-COPY .env .
+# COPY .env .
 
 # Build the application for Vue.js + Vite
 RUN npm run build
