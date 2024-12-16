@@ -27,7 +27,7 @@ COPY --from=builder --chown=vueuser:nodejs /app/dist ./dist
 COPY --from=builder --chown=vueuser:nodejs /app/node_modules ./node_modules
 COPY --chown=vueuser:nodejs package.json .
 COPY --chown=vueuser:nodejs vite.config.js .
-COPY --chown=vueuser:nodejs .env .
+# COPY --chown=vueuser:nodejs .env .
 
 # Set environment variables
 ENV NODE_ENV=production \
