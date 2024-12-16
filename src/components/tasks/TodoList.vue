@@ -160,7 +160,6 @@ const fetchTasks = async () => {
   loading.value = true
   try {
     const response = await taskService.getAllTasks()
-    console.log(response)
     tasks.value = response
   } catch (err) {
     taskLoadError()
